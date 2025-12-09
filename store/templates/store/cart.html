@@ -1,0 +1,49 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<h2>Корзина</h2>
+
+{% if products %}
+<table border="1" width="100%">
+    <tr>
+        <th>Фото</th>
+        <th>Товар</th>
+        <th>Цена</th>
+        <th>Кол-во</th>
+        <th>Сумма</th>
+        <th>Удалить</th>
+    </tr>
+
+    {% for product in products %}
+    <tr>
+        <td>
+            <img src="{{ product.image.url }}" width="80">
+        </td>
+
+        <td>{{ product.name }}</td>
+        <td>{{ product.price }} ₸</td>
+
+        <td>
+            <a href="{% url 'decrease_quantity' product.id %}">➖</a>
+            {{ product.quantity }}
+            <a href="{% url 'increase_quantity' product.id %}">➕</a>
+        </td>
+
+        <td>{{ product.total_price }} ₸</td>
+
+        <td>
+            <a href="{% url 'remove_from_cart' product.id %}">❌</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h3>Итого: {{ total }} ₸</h3>
+
+<a href="{% url 'checkout' %}" class="btn">Оформить заказ</a>
+
+{% else %}
+<p>Корзина пуста</p>
+{% endif %}
+
+{% endblock %}

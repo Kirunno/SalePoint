@@ -1,0 +1,25 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<h2>Оформление заказа</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    <label>Тип доставки:</label><br>
+    <select name="delivery_type">
+        <option value="pickup">Самовывоз</option>
+        <option value="delivery">Доставка</option>
+    </select>
+
+    <br><br>
+
+    <label>Адрес (если доставка):</label><br>
+    <input type="text" name="address">
+
+    <br><br>
+
+    <button class="btn" type="submit">Подтвердить заказ</button>
+</form>
+
+{% endblock %}

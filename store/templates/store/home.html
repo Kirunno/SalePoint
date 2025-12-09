@@ -1,0 +1,35 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Главная – SalePoint{% endblock %}
+
+{% block content %}
+
+<h2>Каталог смартфонов</h2>
+
+<div class="catalog-grid">
+
+    {% for product in products %}
+    <article class="product-card">
+
+        <a href="{% url 'product_detail' product.id %}">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+        </a>
+
+        <h3>
+            <a href="{% url 'product_detail' product.id %}">
+                {{ product.name }}
+            </a>
+        </h3>
+
+        <p class="price">{{ product.price }} ₸</p>
+
+        <a href="{% url 'add_to_cart' product.id %}" class="btn">
+            Добавить в корзину
+        </a>
+
+    </article>
+    {% endfor %}
+
+</div>
+
+{% endblock %}

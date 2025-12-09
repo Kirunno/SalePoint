@@ -1,0 +1,26 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Регистрация – SalePoint{% endblock %}
+
+{% block content %}
+
+<h2 class="page-title">Регистрация</h2>
+
+<form method="post" class="form-card auth-form">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    {% for field in form %}
+        <div class="form-row">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {{ field.errors }}
+        </div>
+    {% endfor %}
+
+    <button type="submit" class="btn primary">
+        Создать аккаунт
+    </button>
+</form>
+
+{% endblock %}

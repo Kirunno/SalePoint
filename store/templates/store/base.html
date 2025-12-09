@@ -1,12 +1,95 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>SalePoint</title>
+    <title>{% block title %}SalePoint{% endblock %}</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Интернет-магазин смартфонов SalePoint">
+
     <link rel="stylesheet" href="{% static 'store/style.css' %}">
 </head>
+
 <body>
-    <h1>Добро пожаловать в SalePoint!</h1>
+
+<!-- ===== ШАПКА САЙТА ===== -->
+<header>
+    <div class="container">
+
+        <div class="top-row">
+
+            <!-- ЛОГО -->
+            <h1 class="logo">
+                <a href="{% url 'home' %}">SalePoint</a>
+            </h1>
+
+            <!-- НАВИГАЦИЯ -->
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="{% url 'home' %}">Главная</a></li>
+                    <li><a href="{% url 'cart' %}">Корзина</a></li>
+
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'profile' %}">Профиль</a></li>
+                        <li><a href="{% url 'logout' %}">Выйти</a></li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}">Вход</a></li>
+                        <li><a href="{% url 'register' %}">Регистрация</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+
+        <!-- ===== ПОИСК ===== -->
+        <form method="get" action="{% url 'home' %}" class="search-form">
+            <input 
+                type="text" 
+                name="q" 
+                placeholder="Поиск по товарам..."
+                value="{{ request.GET.q }}"
+            >
+            <button type="submit">Поиск</button>
+        </form>
+
+    </div>
+</header>
+
+<!-- ===== ОСНОВНОЕ СОДЕРЖИМОЕ ===== -->
+<main class="container">
+    {% block content %}{% endblock %}
+</main>
+
+<!-- ===== ПОДВАЛ ===== -->
+<footer>
+    <div class="container footer-grid">
+
+        <section>
+            <h2>SalePoint</h2>
+            <p>Интернет-магазин смартфонов</p>
+        </section>
+
+        <section>
+            <h2>Покупателям</h2>
+            <ul>
+                <li><a href="#">Доставка</a></li>
+                <li><a href="#">Оплата</a></li>
+                <li><a href="#">Гарантия</a></li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Контакты</h2>
+            <p>Телефон: +7 700 000 00 00</p>
+            <p>Город: Алматы</p>
+        </section>
+
+    </div>
+
+    <p class="footer-copy">
+        © 2025 SalePoint. Все права защищены.
+    </p>
+</footer>
+
 </body>
 </html>

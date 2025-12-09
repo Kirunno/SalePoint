@@ -1,0 +1,37 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="product-detail">
+
+    {% if product.image %}
+        <img src="{{ product.image.url }}" width="300">
+    {% endif %}
+
+    <h2>{{ product.name }}</h2>
+
+    <p>{{ product.description }}</p>
+
+    <h3>{{ product.price }} ₸</h3>
+
+    <form method="post" action="{% url 'add_to_cart' product.id %}">
+        {% csrf_token %}
+
+        <label>Количество:</label>
+        <input type="number" name="quantity" value="1" min="1">
+
+        <br><br>
+
+        <button type="submit" class="btn">
+            Добавить в корзину
+        </button>
+    </form>
+
+    <br>
+
+    <a href="{% url 'home' %}">
+        ← Вернуться в каталог
+    </a>
+
+</div>
+{% endblock %}

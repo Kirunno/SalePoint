@@ -1,0 +1,10 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<h2>Профиль</h2>
+
+<p><b>Логин:</b> {{ user.username }}</p>
+<p><b>Email:</b> {{ user.email }}</p>
+
+<a href="{% url 'logout' %}" class="btn">Выйти</a>
+{% endblock %}
