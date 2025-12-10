@@ -1,9 +1,14 @@
 {% extends 'store/base.html' %}
+{% block title %}Заказ оформлен — SalePoint{% endblock %}
 
 {% block content %}
-<h2>✅ Заказ оформлен!</h2>
-
-<p>Спасибо за покупку! Мы скоро с вами свяжемся.</p>
-
-<a href="{% url 'home' %}" class="btn">Вернуться в магазин</a>
+<div class="d-flex justify-content-center">
+  <div class="card text-center p-5" style="max-width:720px;">
+    <div class="mb-3 display-6 text-success"><i class="fa-solid fa-circle-check"></i></div>
+    <h3>✅ Заказ оформлен!</h3>
+    <p class="text-muted">Спасибо за покупку! Мы скоро с вами свяжемся.</p>
+    <a href="{% url 'home' %}" class="btn btn-outline-primary">Вернуться в магазин</a>
+    <a href="{% url 'profile' %}" class="btn btn-link">Перейти в профиль</a>
+  </div>
+</div>
 {% endblock %}

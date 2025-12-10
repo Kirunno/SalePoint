@@ -1,49 +1,75 @@
 {% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Корзина — SalePoint{% endblock %}
 
 {% block content %}
-<h2>Корзина</h2>
+<div class="row g-4">
+  <div class="col-lg-8">
+    <h3 class="mb-3">Корзина</h3>
 
-{% if products %}
-<table border="1" width="100%">
-    <tr>
-        <th>Фото</th>
-        <th>Товар</th>
-        <th>Цена</th>
-        <th>Кол-во</th>
-        <th>Сумма</th>
-        <th>Удалить</th>
-    </tr>
+    {% if products %}
+      <div class="list-group">
+        {% for product in products %}
+          <div class="list-group-item d-flex gap-3 align-items-center">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" style="height:80px; object-fit:contain">
+            
+            <div class="flex-grow-1">
+              <a href="{% url 'product_detail' product.id %}" class="text-decoration-none text-dark fw-semibold">
+                {{ product.name }}
+              </a>
 
-    {% for product in products %}
-    <tr>
-        <td>
-            <img src="{{ product.image.url }}" width="80">
-        </td>
+              <div class="small text-muted">{{ product.short_description|default:'' }}</div>
 
-        <td>{{ product.name }}</td>
-        <td>{{ product.price }} ₸</td>
+              <div class="mt-2 d-flex gap-2 align-items-center">
+                <a href="{% url 'decrease_quantity' product.id %}" class="btn btn-outline-secondary btn-sm">−</a>
+                <div class="px-3 border rounded">{{ product.quantity }}</div>
+                <a href="{% url 'increase_quantity' product.id %}" class="btn btn-outline-secondary btn-sm">+</a>
 
-        <td>
-            <a href="{% url 'decrease_quantity' product.id %}">➖</a>
-            {{ product.quantity }}
-            <a href="{% url 'increase_quantity' product.id %}">➕</a>
-        </td>
+                <span class="ms-3 small text-muted">Цена: {{ product.price }} ₸</span>
+              </div>
+            </div>
 
-        <td>{{ product.total_price }} ₸</td>
+            <div class="text-end">
+              <div class="fw-bold">{{ product.total_price }} ₸</div>
+              <a href="{% url 'remove_from_cart' product.id %}" class="btn btn-link text-danger small">Удалить</a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
 
-        <td>
-            <a href="{% url 'remove_from_cart' product.id %}">❌</a>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+    {% else %}
+      <div class="card p-4 text-center">
+        <h5>Корзина пуста</h5>
+        <p class="small text-muted">Добавьте товары — они появятся здесь.</p>
+        <a href="{% url 'home' %}" class="btn btn-outline-primary">Перейти в каталог</a>
+      </div>
+    {% endif %}
+  </div>
 
-<h3>Итого: {{ total }} ₸</h3>
+  <div class="col-lg-4">
+    <div class="card p-3">
+      <h6>Итог заказа</h6>
 
-<a href="{% url 'checkout' %}" class="btn">Оформить заказ</a>
+      <div class="d-flex justify-content-between mt-2">
+        <div class="text-muted">Товары</div>
+        <div class="fw-semibold">{{ total }} ₸</div>
+      </div>
 
-{% else %}
-<p>Корзина пуста</p>
-{% endif %}
+      <hr>
 
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="fw-bold">Итого</div>
+        <div class="h5 mb-0">{{ total }} ₸</div>
+      </div>
+
+      <a href="{% url 'checkout' %}" class="btn btn-primary w-100 mb-2">Оформить заказ</a>
+
+      <div class="small text-muted">
+        Гарантия возврата 14 дней • Безопасная оплата
+      </div>
+    </div>
+  </div>
+
+</div>
 {% endblock %}

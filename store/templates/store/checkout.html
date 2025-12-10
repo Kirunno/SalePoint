@@ -1,25 +1,70 @@
 {% extends 'store/base.html' %}
+{% block title %}Оформление заказа — SalePoint{% endblock %}
 
 {% block content %}
-<h2>Оформление заказа</h2>
+<div class="row">
+  <div class="col-lg-7">
+    <div class="card p-4">
+      <h4 class="mb-3">Оформление заказа</h4>
+      <form method="post" action="{% url 'checkout' %}">
+        {% csrf_token %}
 
-<form method="post">
-    {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label">Тип доставки</label>
+          <select name="delivery_type" class="form-select">
+            <option value="pickup">Самовывоз</option>
+            <option value="delivery">Доставка</option>
+          </select>
+        </div>
 
-    <label>Тип доставки:</label><br>
-    <select name="delivery_type">
-        <option value="pickup">Самовывоз</option>
-        <option value="delivery">Доставка</option>
-    </select>
+        <div class="mb-3">
+          <label class="form-label">Адрес (если доставка)</label>
+          <input type="text" name="address" class="form-control" value="{{ request.POST.address|default:'' }}">
+        </div>
 
-    <br><br>
+        <div class="mb-3">
+          <label class="form-label">Способ оплаты</label>
+          <select name="payment_method" class="form-select">
+            <option value="cash">Наличными при получении</option>
+            <option value="card">Картой онлайн</option>
+            <option value="card_on_delivery">Карточкой при доставке</option>
+          </select>
+        </div>
 
-    <label>Адрес (если доставка):</label><br>
-    <input type="text" name="address">
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" id="agree" name="agree" required>
+          <label class="form-check-label small" for="agree">Я согласен(а) с <a href="#">правилами</a> и политикой возвратов</label>
+        </div>
 
-    <br><br>
+        <button type="submit" class="btn btn-primary">Подтвердить заказ</button>
+      </form>
+    </div>
+  </div>
 
-    <button class="btn" type="submit">Подтвердить заказ</button>
-</form>
-
+  <div class="col-lg-5">
+    <div class="card p-3">
+      <h6>Ваш заказ</h6>
+      {% if products %}
+        <ul class="list-unstyled">
+          {% for p in products %}
+            <li class="d-flex justify-content-between py-2">
+              <div>
+                <div class="small text-muted">{{ p.quantity }} ×</div>
+                <div class="fw-medium">{{ p.name }}</div>
+              </div>
+              <div class="fw-semibold">{{ p.total_price }} ₸</div>
+            </li>
+          {% endfor %}
+        </ul>
+        <hr>
+        <div class="d-flex justify-content-between">
+          <div class="text-muted small">Сумма</div>
+          <div class="fw-semibold">{{ total }} ₸</div>
+        </div>
+      {% else %}
+        <p class="small text-muted">Корзина пуста</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
 {% endblock %}

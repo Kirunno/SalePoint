@@ -1,0 +1,28 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Категории — SalePoint{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h3 class="mb-4">Все категории</h3>
+
+    <div class="row g-3">
+        {% for category in categories %}
+            <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                <a href="{% url 'category_detail' category.id %}" class="card text-decoration-none h-100">
+                    <div class="card-body text-center py-3">
+                        {% if category.image %}
+                            <img src="{{ category.image.url }}" class="mb-2" style="height:70px; object-fit:contain">
+                        {% else %}
+                            <div class="mb-2" style="height:70px; background:#f2f2f2;"></div>
+                        {% endif %}
+                        <div class="fw-semibold text-dark">{{ category.name }}</div>
+                        <div class="small text-muted">{{ category.products.count }} товаров</div>
+                    </div>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

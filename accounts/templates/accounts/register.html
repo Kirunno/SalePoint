@@ -1,26 +1,24 @@
-{% extends 'store/base.html' %}
+{% extends 'accounts/base_auth.html' %}
 
 {% block title %}Регистрация – SalePoint{% endblock %}
 
 {% block content %}
+<h2>Регистрация</h2>
 
-<h2 class="page-title">Регистрация</h2>
-
-<form method="post" class="form-card auth-form">
+<form method="post">
     {% csrf_token %}
     {{ form.non_field_errors }}
 
     {% for field in form %}
-        <div class="form-row">
-            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-            {{ field }}
-            {{ field.errors }}
-        </div>
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {{ field.errors }}
     {% endfor %}
 
-    <button type="submit" class="btn primary">
-        Создать аккаунт
-    </button>
-</form>
+    <button type="submit">Создать аккаунт</button>
 
+    <div class="form-footer">
+        Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a>
+    </div>
+</form>
 {% endblock %}

@@ -36,6 +36,6 @@ def logout_view(request):
 def profile_view(request):
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
 
-    return render(request, 'accounts/profile.html', {
+    return render(request, 'store/profile.html', {
         'orders': orders
     })

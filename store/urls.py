@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from store import views   # <-- ЭТО ВАЖНО: импортируем views из store приложения
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -16,4 +16,8 @@ urlpatterns = [
     path('checkout/', views.checkout, name='checkout'),
 
     path('profile/', views.profile, name='profile'),
+
+    # Категории
+    path('categories/', views.categories_list, name='categories'),
+    path('category/<int:pk>/', views.category_detail, name='category_detail'),
 ]

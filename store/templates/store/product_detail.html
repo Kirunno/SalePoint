@@ -1,37 +1,72 @@
 {% extends 'store/base.html' %}
 {% load static %}
 
+{% block title %}{{ product.name }} — SalePoint{% endblock %}
+
 {% block content %}
-<div class="product-detail">
+<div class="product-detail row g-4">
+  <div class="col-lg-6">
+    <div class="card p-3">
+      <div class="product-gallery d-flex align-items-center justify-content-center" style="min-height:380px;">
+        {% if product.image %}
+          <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid product-main-img">
+        {% else %}
+          <div class="placeholder-img w-100" style="height:360px"></div>
+        {% endif %}
+      </div>
+      <!-- small thumbnails placeholder (no JS) -->
+      <div class="d-flex gap-2 mt-3">
+        <div class="thumb placeholder-thumb"></div>
+        <div class="thumb placeholder-thumb"></div>
+        <div class="thumb placeholder-thumb"></div>
+      </div>
+    </div>
+  </div>
 
-    {% if product.image %}
-        <img src="{{ product.image.url }}" width="300">
-    {% endif %}
+  <div class="col-lg-6">
+    <div class="card p-4">
+      <h2 class="h4 mb-2">{{ product.name }}</h2>
+      <div class="mb-2 text-muted small">Артикул: {{ product.id }} • В наличии: {% if product.stock %}есть{% else %}нет{% endif %}</div>
 
-    <h2>{{ product.name }}</h2>
+      <div class="d-flex align-items-baseline gap-3 mb-3">
+        {% if product.old_price %}
+          <div class="text-muted text-decoration-line-through">{{ product.old_price }} ₸</div>
+        {% endif %}
+        <div class="h3 product-price mb-0">{{ product.price }} ₸</div>
+        {% if product.discount %}
+          <div class="sticker-sale ms-2">-{{ product.discount }}%</div>
+        {% endif %}
+      </div>
 
-    <p>{{ product.description }}</p>
+      <p class="text-muted small mb-3">{{ product.short_description|default:product.description|truncatechars:140 }}</p>
 
-    <h3>{{ product.price }} ₸</h3>
-
-    <form method="post" action="{% url 'add_to_cart' product.id %}">
+      <form method="post" action="{% url 'add_to_cart' product.id %}" class="row g-2 align-items-center">
         {% csrf_token %}
+        <div class="col-auto">
+          <label class="small">Кол-во</label>
+          <input type="number" name="quantity" min="1" value="1" class="form-control qty-input" style="width:100px">
+        </div>
 
-        <label>Количество:</label>
-        <input type="number" name="quantity" value="1" min="1">
+        <div class="col">
+          <button type="submit" class="btn btn-lg btn-primary w-100">Добавить в корзину</button>
+        </div>
+      </form>
 
-        <br><br>
+      <hr class="my-4">
 
-        <button type="submit" class="btn">
-            Добавить в корзину
-        </button>
-    </form>
+      <h6 class="mb-2">Описание</h6>
+      <p class="small text-muted">{{ product.description|linebreaksbr }}</p>
 
-    <br>
-
-    <a href="{% url 'home' %}">
-        ← Вернуться в каталог
-    </a>
-
+      <!-- Simple spec list (if available) -->
+      {% if product.specs %}
+        <h6 class="mt-3">Характеристики</h6>
+        <ul class="small text-muted">
+          {% for k,v in product.specs.items %}
+            <li><b>{{ k }}:</b> {{ v }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+  </div>
 </div>
 {% endblock %}

@@ -1,0 +1,70 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Профиль — SalePoint{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+
+  <!-- Левая колонка: данные пользователя -->
+  <div class="col-lg-4">
+    <div class="card p-4 text-center">
+      <div class="mb-3">
+        <!-- Заглушка аватара -->
+        <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center"
+             style="width:100px;height:100px;">
+          <i class="fa-solid fa-user fa-2x text-muted"></i>
+        </div>
+      </div>
+
+      <h4 class="fw-semibold mb-1">{{ user.username }}</h4>
+      <div class="text-muted small mb-3">{{ user.email }}</div>
+
+      <a href="#" class="btn btn-outline-primary btn-sm mb-2 w-100">
+        Изменить профиль
+      </a>
+
+      <a href="{% url 'logout' %}" class="btn btn-danger btn-sm w-100">
+        Выйти
+      </a>
+    </div>
+  </div>
+
+  <!-- Правая колонка: история заказов -->
+  <div class="col-lg-8">
+    <div class="card p-4">
+      <h4 class="mb-3">История заказов</h4>
+
+      {% if orders %}
+        <ul class="list-group">
+          {% for order in orders %}
+            <li class="list-group-item py-3">
+              <div class="d-flex justify-content-between align-items-start">
+                
+                <div>
+                  <div class="fw-semibold">Заказ № {{ order.id }}</div>
+                  <div class="text-muted small">
+                    {{ order.created_at|date:"d.m.Y H:i" }} • {{ order.status|default:"Обрабатывается" }}
+                  </div>
+                  <div class="text-muted small">Товаров: {{ order.items_count }}</div>
+                </div>
+
+                <div class="text-end">
+                  <div class="fw-semibold">{{ order.total }} ₸</div>
+                  <a href="{% url 'order_detail' order.id %}" class="small">Детали →</a>
+                </div>
+
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div class="text-center text-muted small">
+          У вас пока нет заказов.
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+{% endblock %}

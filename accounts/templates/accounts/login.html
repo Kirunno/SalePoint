@@ -1,30 +1,26 @@
-{% extends 'store/base.html' %}
+{% extends 'accounts/base_auth.html' %}
 
 {% block title %}Вход – SalePoint{% endblock %}
 
 {% block content %}
+<h2>Вход</h2>
 
-<h2 class="page-title">Вход в аккаунт</h2>
-
-<form method="post" class="form-card auth-form">
+<form method="post">
     {% csrf_token %}
     {{ form.non_field_errors }}
 
-    <div class="form-row">
-        <label for="{{ form.username.id_for_label }}">Имя пользователя</label>
-        {{ form.username }}
-        {{ form.username.errors }}
-    </div>
+    <label for="{{ form.username.id_for_label }}">Имя пользователя</label>
+    {{ form.username }}
+    {{ form.username.errors }}
 
-    <div class="form-row">
-        <label for="{{ form.password.id_for_label }}">Пароль</label>
-        {{ form.password }}
-        {{ form.password.errors }}
-    </div>
+    <label for="{{ form.password.id_for_label }}">Пароль</label>
+    {{ form.password }}
+    {{ form.password.errors }}
 
-    <button type="submit" class="btn primary">
-        Войти
-    </button>
+    <button type="submit">Войти</button>
+
+    <div class="form-footer">
+        Нет аккаунта? <a href="{% url 'register' %}">Зарегистрируйтесь</a>
+    </div>
 </form>
-
 {% endblock %}

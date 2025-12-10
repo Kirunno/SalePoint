@@ -6,90 +6,182 @@
     <title>{% block title %}SalePoint{% endblock %}</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Интернет-магазин смартфонов SalePoint">
+    <meta name="description" content="Интернет-магазин электроники SalePoint">
 
+    <!-- ✅ BOOTSTRAP 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- ✅ FONT AWESOME -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Твой CSS -->
     <link rel="stylesheet" href="{% static 'store/style.css' %}">
+
+    <style>
+        body {
+            background-color: #F5F5F5;
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+        }
+
+        /* ✅ Цвета проекта */
+        .bg-main {
+            background-color: #5B1F91;
+        }
+
+        .btn-cart {
+            background-color: #0000CC;
+            color: white;
+        }
+
+        .btn-cart:hover {
+            background-color: #000099;
+        }
+
+        .badge-sale {
+            background-color: #FFD700;
+            color: black;
+            font-weight: bold;
+        }
+
+        .search-input {
+            border-radius: 30px;
+            padding-left: 40px;
+        }
+
+        .search-icon {
+            position: absolute;
+            top: 50%;
+            left: 14px;
+            transform: translateY(-50%);
+            color: #777;
+        }
+
+        footer {
+            background: #111;
+            color: #aaa;
+        }
+
+        footer a {
+            color: #ccc;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: #FFD700;
+        }
+    </style>
 </head>
 
 <body>
 
-<!-- ===== ШАПКА САЙТА ===== -->
-<header>
-    <div class="container">
+<!-- ✅ ШАПКА -->
+<nav class="navbar navbar-expand-lg bg-main navbar-dark sticky-top py-2">
+    <div class="container-fluid px-4">
 
-        <div class="top-row">
+        <!-- ЛОГО -->
+        <a class="navbar-brand fw-bold fs-4 text-white" href="{% url 'home' %}">
+            SalePoint
+        </a>
 
-            <!-- ЛОГО -->
-            <h1 class="logo">
-                <a href="{% url 'home' %}">SalePoint</a>
-            </h1>
-
-            <!-- НАВИГАЦИЯ -->
-            <nav>
-                <ul class="nav-menu">
-                    <li><a href="{% url 'home' %}">Главная</a></li>
-                    <li><a href="{% url 'cart' %}">Корзина</a></li>
-
-                    {% if user.is_authenticated %}
-                        <li><a href="{% url 'profile' %}">Профиль</a></li>
-                        <li><a href="{% url 'logout' %}">Выйти</a></li>
-                    {% else %}
-                        <li><a href="{% url 'login' %}">Вход</a></li>
-                        <li><a href="{% url 'register' %}">Регистрация</a></li>
-                    {% endif %}
-                </ul>
-            </nav>
-        </div>
-
-        <!-- ===== ПОИСК ===== -->
-        <form method="get" action="{% url 'home' %}" class="search-form">
-            <input 
-                type="text" 
-                name="q" 
+        <!-- ПОИСК -->
+        <form method="get" action="{% url 'home' %}" class="d-flex mx-auto position-relative w-50">
+            <i class="fa fa-search search-icon"></i>
+            <input
+                type="text"
+                name="q"
+                class="form-control search-input"
                 placeholder="Поиск по товарам..."
                 value="{{ request.GET.q }}"
             >
-            <button type="submit">Поиск</button>
         </form>
 
-    </div>
-</header>
+        <!-- ПРАВАЯ ЧАСТЬ -->
+        <div class="d-flex align-items-center gap-4 text-white">
 
-<!-- ===== ОСНОВНОЕ СОДЕРЖИМОЕ ===== -->
-<main class="container">
+            <!-- КАТАЛОГ -->
+            <a href="#" class="text-white text-center text-decoration-none">
+                <i class="fa-solid fa-bars fa-lg"></i>
+                <div style="font-size:12px;">Каталог</div>
+            </a>
+
+            <!-- КОРЗИНА -->
+            <a href="{% url 'cart' %}" class="text-white text-center position-relative text-decoration-none">
+                <i class="fa-solid fa-cart-shopping fa-lg"></i>
+
+                {% if request.session.cart %}
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        {{ request.session.cart|length }}
+                    </span>
+                {% endif %}
+
+                <div style="font-size:12px;">Корзина</div>
+            </a>
+
+            <!-- ПРОФИЛЬ -->
+            {% if user.is_authenticated %}
+                <a href="{% url 'profile' %}" class="text-white text-center text-decoration-none">
+                    <i class="fa-solid fa-user fa-lg"></i>
+                    <div style="font-size:12px;">Профиль</div>
+                </a>
+
+                <a href="{% url 'logout' %}" class="text-white text-center text-decoration-none">
+                    <i class="fa-solid fa-right-from-bracket fa-lg"></i>
+                    <div style="font-size:12px;">Выход</div>
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="text-white text-center text-decoration-none">
+                    <i class="fa-solid fa-user fa-lg"></i>
+                    <div style="font-size:12px;">Вход</div>
+                </a>
+            {% endif %}
+
+        </div>
+
+    </div>
+</nav>
+
+<!-- ✅ ОСНОВНОЙ КОНТЕНТ -->
+<main class="container-fluid py-4">
     {% block content %}{% endblock %}
 </main>
 
-<!-- ===== ПОДВАЛ ===== -->
-<footer>
-    <div class="container footer-grid">
+<!-- ✅ ПОДВАЛ -->
+<footer class="pt-4 pb-3 mt-5">
+    <div class="container">
+        <div class="row">
 
-        <section>
-            <h2>SalePoint</h2>
-            <p>Интернет-магазин смартфонов</p>
-        </section>
+            <div class="col-md-4">
+                <h5 class="text-white">SalePoint</h5>
+                <p>Интернет-магазин электроники и смартфонов</p>
+            </div>
 
-        <section>
-            <h2>Покупателям</h2>
-            <ul>
-                <li><a href="#">Доставка</a></li>
-                <li><a href="#">Оплата</a></li>
-                <li><a href="#">Гарантия</a></li>
-            </ul>
-        </section>
+            <div class="col-md-4">
+                <h5 class="text-white">Покупателям</h5>
+                <ul class="list-unstyled">
+                    <li><a href="#">Доставка</a></li>
+                    <li><a href="#">Оплата</a></li>
+                    <li><a href="#">Гарантия</a></li>
+                </ul>
+            </div>
 
-        <section>
-            <h2>Контакты</h2>
-            <p>Телефон: +7 700 000 00 00</p>
-            <p>Город: Алматы</p>
-        </section>
+            <div class="col-md-4">
+                <h5 class="text-white">Контакты</h5>
+                <p>📞 +7 700 000 00 00</p>
+                <p>📍 Алматы</p>
+            </div>
 
+        </div>
+
+        <hr class="border-secondary">
+
+        <p class="text-center mb-0">
+            © 2025 SalePoint. Все права защищены.
+        </p>
     </div>
-
-    <p class="footer-copy">
-        © 2025 SalePoint. Все права защищены.
-    </p>
 </footer>
+
+<!-- ✅ BOOTSTRAP JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
