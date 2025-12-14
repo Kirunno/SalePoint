@@ -27,7 +27,7 @@ urlpatterns = [
     path('orders/', views.orders_list, name='orders'),
     path('profile/edit/', views.profile_edit, name='profile_edit'),
     path('profile/change-password/', views.change_password, name='change_password'),
-     path('delivery/', views.delivery, name='delivery'),
+    path('delivery/', views.delivery, name='delivery'),
     path('payment-info/', views.payment_info, name='payment_info'),
     path('warranty/', views.warranty, name='warranty'),
 

@@ -4,69 +4,80 @@
 {% block title %}{{ product.name }} — SalePoint{% endblock %}
 
 {% block content %}
-<div class="product-detail row g-4">
+<div class="row g-4">
+
+  <!-- IMAGE -->
   <div class="col-lg-6">
     <div class="card p-3">
-      <div class="product-gallery d-flex align-items-center justify-content-center" style="min-height:380px;">
+      <div class="d-flex align-items-center justify-content-center" style="min-height:380px;">
         {% if product.image %}
-          <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid product-main-img">
+          <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid">
         {% else %}
-          <div class="placeholder-img w-100" style="height:360px"></div>
+          <div style="height:360px; background:#f1f1f1;"
+               class="w-100 d-flex align-items-center justify-content-center text-muted">
+            Нет изображения
+          </div>
         {% endif %}
-      </div>
-      <!-- small thumbnails placeholder (no JS) -->
-      <div class="d-flex gap-2 mt-3">
-        <div class="thumb placeholder-thumb"></div>
-        <div class="thumb placeholder-thumb"></div>
-        <div class="thumb placeholder-thumb"></div>
       </div>
     </div>
   </div>
 
+  <!-- INFO -->
   <div class="col-lg-6">
     <div class="card p-4">
+
       <h2 class="h4 mb-2">{{ product.name }}</h2>
-      <div class="mb-2 text-muted small">Артикул: {{ product.id }} • В наличии: {% if product.stock %}есть{% else %}нет{% endif %}</div>
+
+      <div class="mb-3 text-muted small">
+        Артикул: {{ product.id }} •
+        {% if product.is_available %}
+          В наличии
+        {% else %}
+          Нет в наличии
+        {% endif %}
+      </div>
 
       <div class="d-flex align-items-baseline gap-3 mb-3">
         {% if product.old_price %}
-          <div class="text-muted text-decoration-line-through">{{ product.old_price }} ₸</div>
+          <div class="text-muted text-decoration-line-through">
+            {{ product.old_price }} ₸
+          </div>
         {% endif %}
-        <div class="h3 product-price mb-0">{{ product.price }} ₸</div>
-        {% if product.discount %}
-          <div class="sticker-sale ms-2">-{{ product.discount }}%</div>
-        {% endif %}
+        <div class="h3 mb-0">{{ product.price }} ₸</div>
       </div>
 
-      <p class="text-muted small mb-3">{{ product.short_description|default:product.description|truncatechars:140 }}</p>
+      <p class="text-muted mb-4">
+        {{ product.description|truncatechars:200 }}
+      </p>
 
-      <form method="post" action="{% url 'add_to_cart' product.id %}" class="row g-2 align-items-center">
-        {% csrf_token %}
-        <div class="col-auto">
-          <label class="small">Кол-во</label>
-          <input type="number" name="quantity" min="1" value="1" class="form-control qty-input" style="width:100px">
+      {% if product.is_available %}
+        <form method="post" action="{% url 'add_to_cart' product.id %}" class="row g-2">
+          {% csrf_token %}
+          <div class="col-auto">
+            <input type="number" name="quantity" min="1" value="1"
+                   class="form-control" style="width:90px">
+          </div>
+          <div class="col">
+            <button class="btn btn-primary w-100">
+              Добавить в корзину
+            </button>
+          </div>
+        </form>
+      {% else %}
+        <div class="alert alert-secondary mt-3">
+          Товар временно недоступен
         </div>
-
-        <div class="col">
-          <button type="submit" class="btn btn-lg btn-primary w-100">Добавить в корзину</button>
-        </div>
-      </form>
+      {% endif %}
 
       <hr class="my-4">
 
-      <h6 class="mb-2">Описание</h6>
-      <p class="small text-muted">{{ product.description|linebreaksbr }}</p>
+      <h6>Описание</h6>
+      <p class="small text-muted">
+        {{ product.description|linebreaksbr }}
+      </p>
 
-      <!-- Simple spec list (if available) -->
-      {% if product.specs %}
-        <h6 class="mt-3">Характеристики</h6>
-        <ul class="small text-muted">
-          {% for k,v in product.specs.items %}
-            <li><b>{{ k }}:</b> {{ v }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
     </div>
   </div>
+
 </div>
 {% endblock %}

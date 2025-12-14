@@ -9,13 +9,19 @@
     {% csrf_token %}
     {{ form.non_field_errors }}
 
-    {% for field in form %}
-        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-        {{ field }}
-        {{ field.errors }}
-    {% endfor %}
+    <label for="{{ form.username.id_for_label }}">Имя пользователя</label>
+    {{ form.username }}
+    {{ form.username.errors }}
 
-    <button type="submit">Создать аккаунт</button>
+    <label for="{{ form.password1.id_for_label }}">Пароль</label>
+    {{ form.password1 }}
+    {{ form.password1.errors }}
+
+    <label for="{{ form.password2.id_for_label }}">Повторите пароль</label>
+    {{ form.password2 }}
+    {{ form.password2.errors }}
+
+    <button type="submit">Зарегистрироваться</button>
 
     <div class="form-footer">
         Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a>
