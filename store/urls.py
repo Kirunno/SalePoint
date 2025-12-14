@@ -20,4 +20,17 @@ urlpatterns = [
     # Категории
     path('categories/', views.categories_list, name='categories'),
     path('category/<int:pk>/', views.category_detail, name='category_detail'),
+    path('order/<int:pk>/', views.order_detail, name='order_detail'),
+    path('order/<int:pk>/cancel/', views.cancel_order, name='cancel_order'),
+    path('order/<int:pk>/payment/', views.payment_page, name='payment'),
+    path('order/<int:pk>/payment/success/', views.payment_success, name='payment_success'),
+    path('orders/', views.orders_list, name='orders'),
+    path('profile/edit/', views.profile_edit, name='profile_edit'),
+    path('profile/change-password/', views.change_password, name='change_password'),
+     path('delivery/', views.delivery, name='delivery'),
+    path('payment-info/', views.payment_info, name='payment_info'),
+    path('warranty/', views.warranty, name='warranty'),
+
+
+
 ]

@@ -1,0 +1,36 @@
+{% extends "store/base.html" %}
+{% block title %}Редактировать профиль{% endblock %}
+
+{% block content %}
+
+<h3 class="mb-4">Редактирование профиля</h3>
+
+<div class="card p-4" style="max-width:500px; margin:auto;">
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label class="form-label">Имя пользователя</label>
+            <input type="text" name="username" class="form-control" 
+                   value="{{ user.username }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control" 
+                   value="{{ user.email }}" required>
+        </div>
+
+        <button class="btn btn-primary w-100 mt-2">Сохранить</button>
+    </form>
+
+    <hr>
+
+    <a href="{% url 'change_password' %}" class="btn btn-outline-secondary w-100">
+        Изменить пароль
+    </a>
+
+</div>
+
+{% endblock %}

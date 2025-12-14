@@ -3,12 +3,35 @@
 
 {% block content %}
 <div class="row">
+  <!-- LEFT FORM -->
   <div class="col-lg-7">
     <div class="card p-4">
       <h4 class="mb-3">Оформление заказа</h4>
+
       <form method="post" action="{% url 'checkout' %}">
         {% csrf_token %}
 
+        <!-- USER NAME -->
+        <div class="mb-3">
+          <label class="form-label">Ваше имя</label>
+          <input type="text" name="name" class="form-control" required
+                 value="{{ request.POST.name|default:request.user.username }}">
+        </div>
+
+        <!-- EMAIL -->
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" name="email" class="form-control"
+                 value="{{ request.POST.email|default:request.user.email }}">
+        </div>
+
+        <!-- PHONE -->
+        <div class="mb-3">
+          <label class="form-label">Телефон</label>
+          <input type="text" name="phone" class="form-control" required>
+        </div>
+
+        <!-- DELIVERY -->
         <div class="mb-3">
           <label class="form-label">Тип доставки</label>
           <select name="delivery_type" class="form-select">
@@ -17,49 +40,74 @@
           </select>
         </div>
 
+        <!-- ADDRESS -->
         <div class="mb-3">
-          <label class="form-label">Адрес (если доставка)</label>
-          <input type="text" name="address" class="form-control" value="{{ request.POST.address|default:'' }}">
+          <label class="form-label">Адрес доставки (если выбран курьер)</label>
+          <input type="text" name="address" class="form-control" placeholder="Алматы, ул. ...">
         </div>
 
+        <!-- PAYMENT -->
         <div class="mb-3">
           <label class="form-label">Способ оплаты</label>
-          <select name="payment_method" class="form-select">
-            <option value="cash">Наличными при получении</option>
-            <option value="card">Картой онлайн</option>
-            <option value="card_on_delivery">Карточкой при доставке</option>
+          <select name="payment_type" class="form-select">
+            <option value="cash">Наличными</option>
+            <option value="card">Онлайн картой</option>
+            <option value="card_on_delivery">Картой при получении</option>
           </select>
         </div>
 
-        <div class="form-check mb-3">
-          <input class="form-check-input" type="checkbox" id="agree" name="agree" required>
-          <label class="form-check-label small" for="agree">Я согласен(а) с <a href="#">правилами</a> и политикой возвратов</label>
+        <!-- COMMENT -->
+        <div class="mb-3">
+          <label class="form-label">Комментарий к заказу</label>
+          <textarea name="comment" rows="2" class="form-control"
+                    placeholder="Например: позвоните за 10 минут"></textarea>
         </div>
 
-        <button type="submit" class="btn btn-primary">Подтвердить заказ</button>
+        <!-- PROMO -->
+        <div class="mb-3">
+          <label class="form-label">Промокод</label>
+          <input type="text" name="promo_code" class="form-control"
+                 placeholder="Если есть промокод — введите его здесь">
+        </div>
+
+        <!-- RULES -->
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" id="agree" required>
+          <label class="form-check-label small" for="agree">
+            Я согласен с правилами магазина и политикой возвратов
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 py-2">
+          Подтвердить заказ
+        </button>
       </form>
     </div>
   </div>
 
+  <!-- RIGHT SUMMARY -->
   <div class="col-lg-5">
     <div class="card p-3">
       <h6>Ваш заказ</h6>
+
       {% if products %}
         <ul class="list-unstyled">
           {% for p in products %}
             <li class="d-flex justify-content-between py-2">
               <div>
-                <div class="small text-muted">{{ p.quantity }} ×</div>
                 <div class="fw-medium">{{ p.name }}</div>
+                <div class="small text-muted">{{ p.quantity }} шт</div>
               </div>
               <div class="fw-semibold">{{ p.total_price }} ₸</div>
             </li>
           {% endfor %}
         </ul>
+
         <hr>
+
         <div class="d-flex justify-content-between">
-          <div class="text-muted small">Сумма</div>
-          <div class="fw-semibold">{{ total }} ₸</div>
+          <div class="small text-muted">Итого</div>
+          <div class="fw-bold">{{ total }} ₸</div>
         </div>
       {% else %}
         <p class="small text-muted">Корзина пуста</p>

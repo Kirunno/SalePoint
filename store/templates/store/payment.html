@@ -1,0 +1,37 @@
+{% extends "store/base.html" %}
+{% block title %}Оплата заказа{% endblock %}
+
+{% block content %}
+
+<h3 class="mb-4">Оплата заказа № {{ order.id }}</h3>
+
+<div class="card shadow-sm p-4" style="max-width:500px; margin:auto;">
+
+    <h5 class="mb-3">Сумма к оплате:</h5>
+    <div class="fs-3 fw-bold mb-4">{{ order.total_price }} ₸</div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <label class="form-label">Номер карты</label>
+        <input type="text" class="form-control mb-3" placeholder="0000 0000 0000 0000" required>
+
+        <div class="row mb-3">
+            <div class="col">
+                <label class="form-label">MM/YY</label>
+                <input type="text" class="form-control" placeholder="12/30" required>
+            </div>
+            <div class="col">
+                <label class="form-label">CVV</label>
+                <input type="text" class="form-control" placeholder="123" required>
+            </div>
+        </div>
+
+        <button class="btn btn-primary w-100">
+            Оплатить
+        </button>
+    </form>
+
+</div>
+
+{% endblock %}

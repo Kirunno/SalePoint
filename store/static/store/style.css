@@ -123,3 +123,43 @@ body {
     margin-top: 20px;
     opacity: 0.7;
 }
+
+/* ===== PAYMENT SUCCESS PAGE ===== */
+
+.payment-container {
+    max-width: 420px;
+    margin: 80px auto;
+    text-align: center;
+}
+
+/* Круг с галочкой */
+.success-circle {
+    width: 120px;
+    height: 120px;
+    background: #e6ffe6;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pop 0.5s ease forwards;
+}
+
+/* Галочка */
+.success-check {
+    font-size: 60px;
+    color: #28a745;
+    opacity: 0;
+    transform: scale(0.5);
+    animation: fadeIn 0.6s ease forwards 0.3s;
+}
+
+/* Анимации */
+@keyframes pop {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; transform: scale(1); }
+}

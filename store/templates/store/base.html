@@ -158,9 +158,10 @@
             <div class="col-md-4">
                 <h5 class="text-white">Покупателям</h5>
                 <ul class="list-unstyled">
-                    <li><a href="#">Доставка</a></li>
-                    <li><a href="#">Оплата</a></li>
-                    <li><a href="#">Гарантия</a></li>
+                <li><a href="{% url 'delivery' %}">Доставка</a></li>
+                <li><a href="{% url 'payment_info' %}">Оплата</a></li>
+                <li><a href="{% url 'warranty' %}">Гарантия</a></li>
+
                 </ul>
             </div>
 

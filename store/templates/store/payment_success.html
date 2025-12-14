@@ -1,0 +1,26 @@
+{% extends "store/base.html" %}
+
+{% block title %}Оплата успешна{% endblock %}
+
+{% block content %}
+
+<div class="payment-container">
+
+    <div class="success-circle">
+        <div class="success-check">✔</div>
+    </div>
+
+    <h2 class="fw-bold text-success text-center">Оплата прошла успешно!</h2>
+
+    <p class="text-muted mt-3 text-center">
+        Ваш заказ № <b>{{ order.id }}</b> был успешно оплачен.
+    </p>
+
+    <a href="{% url 'order_detail' order.id %}" class="btn mt-4 w-100 text-center"
+       style="background:#111; border-radius:8px;">
+        Вернуться к заказу
+    </a>
+
+</div>
+
+{% endblock %}

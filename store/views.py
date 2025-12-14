@@ -1,57 +1,81 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-
+from django.views.decorators.csrf import csrf_exempt
+from django.core.paginator import Paginator
+from django.contrib.auth.models import User
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+import random
+import string
 from .models import Product, Order, OrderItem, Category
 
 
 # -------------------------------------------------------
 # Главная страница (поиск, фильтры, категории, сортировка)
 # -------------------------------------------------------
+
 def home(request):
-
-    # Получаем параметры URL
-    query = request.GET.get('q', '')
-    category_id = request.GET.get('category')
-    price_min = request.GET.get('price_min')
-    price_max = request.GET.get('price_max')
-    sort = request.GET.get('sort')
-
-    # Основной запрос
     products = Product.objects.all()
-    categories = Category.objects.all()
+    categories = Category.objects.all()   # <-- в шаблоне используется!
 
-    # Поиск по названию, описанию и категории
-    if query:
+    # --- ПОИСК ---
+    q = request.GET.get("q")
+    if q:
         products = products.filter(
-            Q(name__icontains=query) |
-            Q(description__icontains=query) |
-            Q(category__name__icontains=query)
+            Q(name__icontains=q) |
+            Q(description__icontains=q)
         )
 
-    # Фильтр по категории
-    if category_id:
-        products = products.filter(category_id=category_id)
+    # --- СОРТИРОВКА ---
+    sort = request.GET.get("sort", "new")
 
-    # Фильтр по цене
-    if price_min:
-        products = products.filter(price__gte=price_min)
-    if price_max:
-        products = products.filter(price__lte=price_max)
-
-    # Сортировка
     if sort == "price_asc":
         products = products.order_by("price")
     elif sort == "price_desc":
         products = products.order_by("-price")
-    elif sort == "new":
+    elif sort == "name_asc":
+        products = products.order_by("name")
+    elif sort == "name_desc":
+        products = products.order_by("-name")
+    else:  # new
         products = products.order_by("-id")
 
-    return render(request, "store/home.html", {
-        "products": products,
-        "categories": categories,
-        "query": query,
-    })
+    # --- ФИЛЬТР ПО ЦЕНЕ ---
+    min_price = request.GET.get("min")
+    max_price = request.GET.get("max")
+
+    if min_price:
+        products = products.filter(price__gte=min_price)
+    if max_price:
+        products = products.filter(price__lte=max_price)
+
+    # --- ФИЛЬТР ПО НАЛИЧИЮ ---
+    in_stock = request.GET.get("stock")
+
+    if in_stock == "yes":
+        products = products.filter(is_available=True)
+    elif in_stock == "no":
+        products = products.filter(is_available=False)
+
+    # --- ПАГИНАЦИЯ ---
+    paginator = Paginator(products, 8)  # 8 товаров на странице
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        "page_obj": page_obj,
+        "categories": categories,     # <-- обязательно для блока категорий
+        "sort": sort,
+        "min_price": min_price,
+        "max_price": max_price,
+        "stock": in_stock,
+        "q": q,
+    }
+
+    return render(request, "store/home.html", context)
+
+
 
 
 # -------------------------------------------------------
@@ -63,7 +87,7 @@ def product_detail(request, pk):
 
 
 # -------------------------------------------------------
-# Корзина — добавить, удалить, изменить количество
+# Корзина — добавление, удаление, изменение количества
 # -------------------------------------------------------
 def add_to_cart(request, pk):
     cart = request.session.get("cart", {})
@@ -159,8 +183,7 @@ def checkout(request):
         order.total_price = total
         order.save()
 
-        # очистить корзину
-        request.session["cart"] = {}
+        request.session["cart"] = {}  # очистить корзину
 
         return render(request, "store/success.html", {"order": order})
 
@@ -172,12 +195,31 @@ def checkout(request):
 # -------------------------------------------------------
 @login_required
 def profile(request):
-    orders = Order.objects.filter(user=request.user).order_by("-created_at")
-    return render(request, "store/profile.html", {"orders": orders})
+    status_filter = request.GET.get("status", "all")
+    sort_order = request.GET.get("sort", "new")
+
+    orders = Order.objects.filter(user=request.user)
+
+    # Фильтр по статусу
+    if status_filter != "all":
+        orders = orders.filter(status=status_filter)
+
+    # Сортировка
+    if sort_order == "new":
+        orders = orders.order_by("-created_at")
+    else:
+        orders = orders.order_by("created_at")
+
+    return render(request, "store/profile.html", {
+        "orders": orders,
+        "status_filter": status_filter,
+        "sort_order": sort_order,
+    })
+
 
 
 # -------------------------------------------------------
-# Страница списка всех категорий
+# Список категорий
 # -------------------------------------------------------
 def categories_list(request):
     categories = Category.objects.all()
@@ -185,7 +227,7 @@ def categories_list(request):
 
 
 # -------------------------------------------------------
-# Страница товаров конкретной категории
+# Товары выбранной категории
 # -------------------------------------------------------
 def category_detail(request, pk):
     category = get_object_or_404(Category, pk=pk)
@@ -195,3 +237,139 @@ def category_detail(request, pk):
         "category": category,
         "products": products,
     })
+    
+
+@login_required
+def order_detail(request, pk):
+    order = get_object_or_404(Order, pk=pk, user=request.user)
+    items = OrderItem.objects.filter(order=order)
+
+    return render(request, "store/order_detail.html", {
+        "order": order,
+        "items": items
+    })
+
+
+@login_required
+def cancel_order(request, pk):
+    order = get_object_or_404(Order, pk=pk, user=request.user)
+
+    # Разрешаем отменять только если заказ ещё не отправлен/не выполнен
+    if order.status not in ["Отменён", "Доставлен"]:
+        order.status = "Отменён"
+        order.save()
+
+    return redirect('order_detail', pk=pk)
+
+
+@login_required
+def cancel_order(request, pk):
+    order = get_object_or_404(Order, pk=pk, user=request.user)
+
+    # Нельзя отменить доставленный или уже отменённый заказ
+    if order.status in ["Отменён", "Доставлен"]:
+        return redirect("order_detail", pk=order.id)
+
+    if request.method == "POST":
+        order.status = "Отменён"
+        order.save()
+        return redirect("order_detail", pk=order.id)
+
+    return redirect("order_detail", pk=order.id)
+
+
+@login_required
+@csrf_exempt
+def payment_page(request, pk):
+    order = get_object_or_404(Order, pk=pk, user=request.user)
+
+    # Если заказ уже оплачен
+    if order.status == "Оплачено":
+        return redirect("order_detail", pk=order.id)
+
+    # POST — имитация успешной оплаты
+    if request.method == "POST":
+        order.status = "Оплачено"
+        order.save()
+        return redirect("order_detail", pk=order.id)
+
+    return render(request, "store/payment.html", {
+        "order": order
+    })
+
+
+@login_required
+def order_list(request):
+    orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'store/order_list.html', {'orders': orders})
+
+
+def payment_success(request, pk):
+    order = get_object_or_404(Order, id=pk)
+
+    # Меняем статус заказа
+    order.status = "Оплачено"
+    order.save()
+
+    return render(request, "store/payment_success.html", {"order": order})
+
+
+@login_required
+def orders_list(request):
+    orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'store/orders_list.html', {'orders': orders})
+
+
+@login_required
+def profile_edit(request):
+    user = request.user
+
+    if request.method == "POST":
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+
+        user.username = username
+        user.email = email
+        user.save()
+
+        return redirect("profile")
+
+    return render(request, "store/profile_edit.html", {"user": user})
+
+
+
+@login_required
+def change_password(request):
+    if request.method == "POST":
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Чтобы не разлогинило
+            return redirect("profile")
+    else:
+        form = PasswordChangeForm(request.user)
+
+    return render(request, "store/change_password.html", {"form": form})
+
+
+def delivery(request):
+    return render(request, "store/delivery.html")
+
+def payment_info(request):
+    return render(request, "store/payment_info.html")
+
+def warranty(request):
+    return render(request, "store/warranty.html")
+
+
+
+def generate_tracking_code():
+    prefix = "KZ"
+    number = "".join(random.choices(string.digits, k=9))
+    suffix = "KZ"
+    return f"{prefix}{number}{suffix}"
+
+
+
+
+

@@ -5,40 +5,56 @@
 
 {% block content %}
 
-<!-- HERO / CAROUSEL -->
+<!-- HERO -->
 <div class="mb-4">
   <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
     <div class="carousel-inner rounded-3 overflow-hidden">
 
-      <!-- Slide 1 -->
+      <!-- Slide 1 — iPhone -->
       <div class="carousel-item active"
-           style="background-image:url('{% static 'store/img/hero1.jpg' %}');
-                  background-size:cover; background-position:center; height:380px;">
+           style="
+             background-image:url('{% static 'store/img/hero1.jpg' %}');
+             background-size:cover;
+             background-position:75% 30%;
+             background-repeat:no-repeat;
+             height:380px;">
         <div class="carousel-caption d-none d-md-block text-start hero-caption">
-          <h1 class="display-6 fw-bold">Флагманы 2025 — Лучшие цены</h1>
-          <p class="lead">Скидки до 30% на топовые модели. Бесплатная доставка в Алматы.</p>
-          <a href="#catalog" class="btn btn-lg btn-primary">Перейти в каталог</a>
+          <h1 class="display-6 fw-bold">iPhone 17 Pro Max</h1>
+          <p class="lead">
+            Максимальная производительность. Новый уровень камеры.
+          </p>
+          <a href="#catalog" class="btn btn-lg btn-primary">
+            Перейти в каталог
+          </a>
         </div>
       </div>
 
-      <!-- Slide 2 -->
+      <!-- Slide 2 — AirPods -->
       <div class="carousel-item"
-           style="background-image:url('{% static 'store/img/hero2.jpg' %}');
-                  background-size:cover; background-position:center; height:380px;">
-        <div class="carousel-caption d-none d-md-block hero-caption text-start">
-          <h2 class="fw-bold">Наушники и звук</h2>
-          <p>Премиум звук — доступные цены</p>
-          <a href="#catalog" class="btn btn-lg btn-outline-light">Смотреть</a>
+           style="
+             background-image:url('{% static 'store/img/hero2.jpg' %}');
+             background-size:cover;
+             background-position:center;
+             background-repeat:no-repeat;
+             height:380px;">
+        <div class="carousel-caption d-none d-md-block text-start hero-caption">
+          <h2 class="fw-bold">AirPods Pro (2-го поколения)</h2>
+          <p>Чистый звук. Активное шумоподавление.</p>
+          <a href="#catalog" class="btn btn-lg btn-primary">
+            Перейти в каталог
+          </a>
         </div>
       </div>
 
     </div>
 
-    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+    <button class="carousel-control-prev" type="button"
+            data-bs-target="#heroCarousel" data-bs-slide="prev">
       <span class="carousel-control-prev-icon"></span>
     </button>
 
-    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+    <button class="carousel-control-next" type="button"
+            data-bs-target="#heroCarousel" data-bs-slide="next">
       <span class="carousel-control-next-icon"></span>
     </button>
   </div>
@@ -48,23 +64,31 @@
 <section class="mb-4">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h3 class="section-title">Категории</h3>
-    <a href="{% url 'categories' %}" class="small text-muted">Все категории →</a>
+    <a href="{% url 'categories' %}" class="small text-muted">
+      Все категории →
+    </a>
   </div>
 
   <div class="row g-3">
     {% for category in categories %}
       <div class="col-6 col-sm-4 col-md-3">
-        <a href="?category={{ category.id }}" class="card h-100 category-card text-decoration-none">
+        <a href="?category={{ category.id }}"
+           class="card h-100 category-card text-decoration-none">
           <div class="card-body d-flex flex-column align-items-center text-center py-3">
 
             {% if category.image %}
-              <img src="{{ category.image.url }}" alt="{{ category.name }}" class="mb-2 category-img">
+              <img src="{{ category.image.url }}"
+                   class="mb-2 category-img"
+                   alt="{{ category.name }}">
             {% else %}
               <div class="category-img placeholder mb-2"></div>
             {% endif %}
 
             <div class="fw-semibold">{{ category.name }}</div>
-            <div class="small text-muted">{{ category.products.count }} товаров</div>
+            <div class="small text-muted">
+              {{ category.products.count }} товаров
+            </div>
+
           </div>
         </a>
       </div>
@@ -76,125 +100,113 @@
 <section id="catalog">
   <div class="row">
 
-    <!-- SIDEBAR FILTERS -->
+    <!-- FILTERS -->
     <aside class="col-lg-3 mb-4">
       <div class="card p-3">
         <h6 class="mb-3">Фильтры</h6>
 
         <form method="get" action="{% url 'home' %}">
+
           <div class="mb-2">
             <label class="form-label small">Цена (мин)</label>
-            <input type="number" name="price_min" class="form-control form-control-sm"
-                   value="{{ request.GET.price_min|default:'' }}">
+            <input type="number" name="min"
+                   class="form-control form-control-sm"
+                   value="{{ request.GET.min|default:'' }}">
           </div>
 
           <div class="mb-2">
             <label class="form-label small">Цена (макс)</label>
-            <input type="number" name="price_max" class="form-control form-control-sm"
-                   value="{{ request.GET.price_max|default:'' }}">
+            <input type="number" name="max"
+                   class="form-control form-control-sm"
+                   value="{{ request.GET.max|default:'' }}">
           </div>
 
           <div class="mb-2">
             <label class="form-label small">Сортировка</label>
             <select name="sort" class="form-select form-select-sm">
-              <option value="">По умолчанию</option>
-              <option value="price_asc" {% if request.GET.sort == 'price_asc' %}selected{% endif %}>Дешевле → Дороже</option>
-              <option value="price_desc" {% if request.GET.sort == 'price_desc' %}selected{% endif %}>Дороже → Дешевле</option>
-              <option value="new" {% if request.GET.sort == 'new' %}selected{% endif %}>Новинки</option>
+              <option value="new" {% if sort == 'new' %}selected{% endif %}>Новинки</option>
+              <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>
+                Цена: дешевле → дороже
+              </option>
+              <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>
+                Цена: дороже → дешевле
+              </option>
+              <option value="name_asc" {% if sort == 'name_asc' %}selected{% endif %}>
+                Название: А→Я
+              </option>
+              <option value="name_desc" {% if sort == 'name_desc' %}selected{% endif %}>
+                Название: Я→А
+              </option>
             </select>
           </div>
 
           <div class="d-flex gap-2">
-            <button class="btn btn-primary btn-sm w-100" type="submit">Показать</button>
+            <button class="btn btn-primary btn-sm w-100">Показать</button>
             <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm">Сброс</a>
           </div>
+
         </form>
-      </div>
-
-      <div class="card p-3 mt-3">
-        <h6>Акции</h6>
-
-        {% if promotions %}
-          {% for promo in promotions %}
-            <div class="promo-item py-2 border-bottom">
-              <div class="fw-semibold">{{ promo.title }}</div>
-              <div class="small text-muted">{{ promo.short_text }}</div>
-            </div>
-          {% endfor %}
-        {% else %}
-          <p class="small text-muted mb-0">Акций пока нет</p>
-        {% endif %}
       </div>
     </aside>
 
-    <!-- PRODUCTS GRID -->
+    <!-- PRODUCTS -->
     <div class="col-lg-9">
 
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3 class="section-title mb-0">Популярные товары</h3>
-        <div class="text-muted small">Показано {{ products|length }} товаров</div>
-      </div>
-
-      {% if products %}
-      <div class="row g-3">
-
-        {% for product in products %}
-        <div class="col-6 col-md-4 col-lg-3">
-          <div class="card h-100">
-
-            <!-- FIXED IMAGE BLOCK -->
-            <a href="{% url 'product_detail' product.id %}">
-              <div style="height:180px; display:flex; align-items:center; justify-content:center; background:#f8f9fa;">
-                {% if product.image %}
-                  <img src="{{ product.image.url }}" alt="{{ product.name }}"
-                       style="max-height:100%; max-width:100%; object-fit:contain;">
-                {% else %}
-                  <div class="text-muted small">Нет фото</div>
-                {% endif %}
-              </div>
-            </a>
-
-            <div class="card-body d-flex flex-column">
-
-              <!-- TITLE -->
-              <a href="{% url 'product_detail' product.id %}" class="text-dark text-decoration-none">
-                <div class="fw-semibold" style="font-size:15px; min-height:40px;">
-                  {{ product.name }}
-                </div>
-              </a>
-
-              <!-- PRICE + BUTTON -->
-              <div class="mt-auto">
-                {% if product.old_price %}
-                  <div class="text-muted text-decoration-line-through small">{{ product.old_price }} ₸</div>
-                {% endif %}
-
-                <div class="fw-bold mb-2">{{ product.price }} ₸</div>
-
-                <form method="post" action="{% url 'add_to_cart' product.id %}">
-                  {% csrf_token %}
-                  <input type="hidden" name="quantity" value="1">
-                  <button class="btn btn-primary btn-sm w-100">В корзину</button>
-                </form>
-              </div>
-
-            </div>
-
-          </div>
+        <h3 class="section-title mb-0">Товары</h3>
+        <div class="text-muted small">
+          Показано {{ page_obj|length }} из {{ page_obj.paginator.count }}
         </div>
-        {% endfor %}
-
       </div>
 
+      {% if page_obj %}
+        <div class="row g-3">
+          {% for product in page_obj %}
+            <div class="col-6 col-md-4 col-lg-3">
+              <div class="card h-100">
+
+                <a href="{% url 'product_detail' product.id %}">
+                  <div style="height:180px; display:flex; align-items:center; justify-content:center; background:#f8f9fa;">
+                    {% if product.image %}
+                      <img src="{{ product.image.url }}"
+                           style="max-height:90%; max-width:90%; object-fit:contain;">
+                    {% else %}
+                      <div class="text-muted small">Нет фото</div>
+                    {% endif %}
+                  </div>
+                </a>
+
+                <div class="card-body d-flex flex-column">
+                  <a href="{% url 'product_detail' product.id %}" class="text-dark text-decoration-none">
+                    <div class="fw-semibold" style="font-size:15px; min-height:40px;">
+                      {{ product.name }}
+                    </div>
+                  </a>
+
+                  <div class="mt-auto">
+                    <div class="fw-bold mb-2">{{ product.price }} ₸</div>
+
+                    <form method="post" action="{% url 'add_to_cart' product.id %}">
+                      {% csrf_token %}
+                      <input type="hidden" name="quantity" value="1">
+                      <button class="btn btn-primary btn-sm w-100">
+                        В корзину
+                      </button>
+                    </form>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
       {% else %}
         <div class="text-center text-muted py-5">
           <h4>Ничего не найдено</h4>
-          <p>Попробуйте изменить запрос или сбросить фильтры.</p>
         </div>
       {% endif %}
 
     </div>
-
   </div>
 </section>
 

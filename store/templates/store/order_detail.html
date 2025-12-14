@@ -1,0 +1,149 @@
+{% extends "store/base.html" %}
+{% load math_filters %}
+
+{% block title %}Заказ № {{ order.id }}{% endblock %}
+
+{% block content %}
+
+<h3 class="mb-3">Заказ № {{ order.id }}</h3>
+
+<!-- STATUS + DATE -->
+<p class="text-muted">
+  Создан: {{ order.created_at|date:"d.m.Y H:i" }}
+  {% if order.updated_at %}
+    • Обновлён: {{ order.updated_at|date:"d.m.Y H:i" }}
+  {% endif %}
+
+  <span class="badge
+      {% if order.status == 'Обрабатывается' %} bg-warning text-dark
+      {% elif order.status == 'Оплачено' %} bg-primary
+      {% elif order.status == 'Отправлен' %} bg-info text-dark
+      {% elif order.status == 'Доставлен' %} bg-success
+      {% elif order.status == 'Отменён' %} bg-danger
+      {% endif %}
+  ">
+    {{ order.status }}
+  </span>
+</p>
+
+<hr>
+
+<!-- ORDER INFO -->
+<div class="card mb-4">
+  <div class="card-body">
+
+    <h5 class="mb-3">Информация о заказе</h5>
+
+    {% if order.name %}
+      <p><strong>Имя:</strong> {{ order.name }}</p>
+    {% endif %}
+
+    <p><strong>Телефон:</strong> {{ order.phone }}</p>
+
+    {% if order.email %}
+      <p><strong>Email:</strong> {{ order.email }}</p>
+    {% endif %}
+
+    <p><strong>Тип доставки:</strong>
+      {% if order.delivery_type == "pickup" %}
+        Самовывоз
+      {% else %}
+        Доставка
+      {% endif %}
+    </p>
+
+    {% if order.address %}
+      <p><strong>Адрес:</strong> {{ order.address }}</p>
+    {% endif %}
+
+    {% if order.payment_type %}
+      <p><strong>Оплата:</strong>
+        {% if order.payment_type == "cash" %} Наличными при получении
+        {% elif order.payment_type == "card" %} Картой онлайн
+        {% elif order.payment_type == "card_on_delivery" %} Картой при доставке
+        {% endif %}
+      </p>
+    {% endif %}
+
+    {% if order.comment %}
+      <p><strong>Комментарий:</strong> {{ order.comment }}</p>
+    {% endif %}
+
+    {% if order.admin_comment %}
+      <p class="text-danger"><strong>Комментарий администратора:</strong> {{ order.admin_comment }}</p>
+    {% endif %}
+
+    {% if order.tracking_number %}
+      <p><strong>Трек-номер:</strong> {{ order.tracking_number }}</p>
+    {% endif %}
+
+    {% if order.promo_code %}
+      <p><strong>Промокод:</strong> {{ order.promo_code }}</p>
+    {% endif %}
+
+    {% if order.discount_amount > 0 %}
+      <p><strong>Скидка:</strong> -{{ order.discount_amount }} ₸</p>
+    {% endif %}
+
+  </div>
+</div>
+
+<!-- ITEMS LIST -->
+<h5 class="mb-3">Состав заказа</h5>
+
+<ul class="list-group mb-4">
+  {% for item in items %}
+    <li class="list-group-item d-flex align-items-center gap-3">
+
+      {% if item.product.image %}
+        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}"
+             style="width:70px; height:70px; object-fit:contain;">
+      {% else %}
+        <div style="width:70px; height:70px; background:#f1f1f1;"
+             class="rounded d-flex align-items-center justify-content-center text-muted small">
+          Нет фото
+        </div>
+      {% endif %}
+
+      <div class="flex-grow-1">
+        <div class="fw-semibold">{{ item.product.name }}</div>
+        <div class="small text-muted">
+          {{ item.quantity }} × {{ item.price }} ₸
+        </div>
+      </div>
+
+      <div class="fw-bold">
+        {{ item.quantity|mul:item.price }} ₸
+      </div>
+
+    </li>
+  {% endfor %}
+</ul>
+
+<h4 class="fw-bold">Итого к оплате: {{ order.total_price }} ₸</h4>
+
+<!-- ACTIONS -->
+<div class="mt-4">
+
+  {% if order.status == "Обрабатывается" %}
+    <a href="{% url 'payment' order.id %}" class="btn btn-primary mb-3">Перейти к оплате</a>
+
+    <form method="post" action="{% url 'cancel_order' order.id %}">
+      {% csrf_token %}
+      <button class="btn btn-danger">Отменить заказ</button>
+    </form>
+  {% endif %}
+
+  {% if order.status == "Оплачено" %}
+    <div class="alert alert-success mt-2">Заказ успешно оплачен!</div>
+  {% endif %}
+
+  {% if order.status == "Отправлен" and order.tracking_number %}
+    <div class="alert alert-info mt-3">
+      Ваш заказ отправлен. Трек-номер: <strong>{{ order.tracking_number }}</strong>
+    </div>
+  {% endif %}
+
+</div>
+
+{% endblock %}
