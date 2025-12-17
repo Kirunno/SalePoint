@@ -1,4 +1,3 @@
-/* ===== RESET ===== */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -17,7 +16,6 @@ body {
     padding: 20px;
 }
 
-/* ===== HEADER ===== */
 .site-header {
     background: #111;
     color: white;
@@ -56,7 +54,6 @@ body {
     opacity: 0.7;
 }
 
-/* ===== BANNER ===== */
 .banner {
     background: linear-gradient(90deg, #111, #444);
     color: white;
@@ -66,7 +63,6 @@ body {
     margin-bottom: 30px;
 }
 
-/* ===== CATEGORIES ===== */
 .categories {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -89,7 +85,6 @@ body {
     box-shadow: 0 10px 20px rgba(0,0,0,.12);
 }
 
-/* ===== PRODUCTS ===== */
 .products {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -127,7 +122,6 @@ body {
     margin: 12px 0;
 }
 
-/* ===== BUTTONS ===== */
 .btn {
     display: block;
     background: black;
@@ -143,7 +137,6 @@ body {
     transform: translateY(-1px);
 }
 
-/* ===== FOOTER ===== */
 .site-footer {
     margin-top: 50px;
     background: #111;
@@ -163,14 +156,12 @@ body {
     opacity: 0.7;
 }
 
-/* ===== PAYMENT SUCCESS PAGE ===== */
 .payment-container {
     max-width: 420px;
     margin: 80px auto;
     text-align: center;
 }
 
-/* Круг с галочкой */
 .success-circle {
     width: 120px;
     height: 120px;
@@ -183,7 +174,6 @@ body {
     animation: pop 0.5s ease forwards;
 }
 
-/* Галочка */
 .success-check {
     font-size: 60px;
     color: #28a745;
@@ -192,7 +182,6 @@ body {
     animation: fadeIn 0.6s ease forwards 0.3s;
 }
 
-/* ===== ANIMATIONS ===== */
 @keyframes pop {
     0% { transform: scale(0.5); opacity: 0; }
     100% { transform: scale(1); opacity: 1; }

@@ -8,9 +8,6 @@ from django.contrib.auth.forms import PasswordChangeForm
 from .models import Product, Order, OrderItem, Category
 
 
-# -------------------------------------------------------
-# Главная страница
-# -------------------------------------------------------
 def home(request):
     products = Product.objects.all()
     categories = Category.objects.all()
@@ -54,17 +51,11 @@ def home(request):
     })
 
 
-# -------------------------------------------------------
-# Товар
-# -------------------------------------------------------
 def product_detail(request, pk):
     product = get_object_or_404(Product, pk=pk)
     return render(request, "store/product_detail.html", {"product": product})
 
 
-# -------------------------------------------------------
-# Корзина
-# -------------------------------------------------------
 def add_to_cart(request, pk):
     cart = request.session.get("cart", {})
     quantity = int(request.POST.get("quantity", 1))
@@ -117,9 +108,6 @@ def cart(request):
     })
 
 
-# -------------------------------------------------------
-# Оформление заказа
-# -------------------------------------------------------
 @login_required
 def checkout(request):
     cart = request.session.get("cart", {})
@@ -162,9 +150,6 @@ def checkout(request):
     })
 
 
-# -------------------------------------------------------
-# Профиль
-# -------------------------------------------------------
 @login_required
 def profile(request):
     return render(request, "store/profile.html")
@@ -176,9 +161,6 @@ def orders_list(request):
     return render(request, "store/order_list.html", {"orders": orders})
 
 
-# -------------------------------------------------------
-# Категории
-# -------------------------------------------------------
 def categories_list(request):
     return render(request, "store/categories.html", {
         "categories": Category.objects.all()
@@ -194,9 +176,6 @@ def category_detail(request, pk):
     })
 
 
-# -------------------------------------------------------
-# Заказы
-# -------------------------------------------------------
 @login_required
 def order_detail(request, pk):
     order = get_object_or_404(Order, pk=pk, user=request.user)
@@ -232,9 +211,6 @@ def payment_success(request, pk):
     return render(request, "store/payment_success.html", {"order": order})
 
 
-# -------------------------------------------------------
-# Профиль — редактирование
-# -------------------------------------------------------
 @login_required
 def profile_edit(request):
     if request.method == "POST":
@@ -255,9 +231,6 @@ def change_password(request):
     return render(request, "store/change_password.html", {"form": form})
 
 
-# -------------------------------------------------------
-# Инфо страницы
-# -------------------------------------------------------
 def delivery(request):
     return render(request, "store/delivery.html")
 
@@ -268,3 +241,7 @@ def payment_info(request):
 
 def warranty(request):
     return render(request, "store/warranty.html")
+
+
+def help_page(request):
+    return render(request, "store/help.html")

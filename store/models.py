@@ -2,9 +2,6 @@ from django.db import models
 from django.conf import settings
 
 
-# -----------------------
-# КАТЕГОРИИ
-# -----------------------
 class Category(models.Model):
     name = models.CharField(max_length=100)
     image = models.ImageField(upload_to='categories/', blank=True, null=True)
@@ -13,16 +10,12 @@ class Category(models.Model):
         return self.name
 
 
-# -----------------------
-# ТОВАРЫ
-# -----------------------
 class Product(models.Model):
     category = models.ForeignKey(
         Category,
         on_delete=models.CASCADE,
         related_name='products'
     )
-
     name = models.CharField(max_length=200)
     description = models.TextField()
     price = models.IntegerField()
@@ -34,9 +27,6 @@ class Product(models.Model):
         return self.name
 
 
-# -----------------------
-# КОРЗИНА
-# -----------------------
 class Cart(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
@@ -53,11 +43,7 @@ class CartItem(models.Model):
         return self.product.price * self.quantity
 
 
-# -----------------------
-# ЗАКАЗЫ
-# -----------------------
 class Order(models.Model):
-
     DELIVERY_CHOICES = [
         ('pickup', 'Самовывоз'),
         ('delivery', 'Доставка'),
@@ -69,31 +55,22 @@ class Order(models.Model):
         ('online', 'Онлайн-оплата'),
     ]
 
-    # Основные данные
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
-    name = models.CharField(max_length=100, blank=True)              # Имя клиента
-    email = models.EmailField(blank=True)                            # Email клиента
+    name = models.CharField(max_length=100, blank=True)
+    email = models.EmailField(blank=True)
     phone = models.CharField(max_length=20)
     address = models.CharField(max_length=255, blank=True)
-
-    # Характеристики заказа
     delivery_type = models.CharField(max_length=20, choices=DELIVERY_CHOICES)
     payment_type = models.CharField(max_length=20, choices=PAYMENT_CHOICES, default='online')
-
     total_price = models.IntegerField(default=0)
-
-    status = models.CharField(max_length=50, default="Обрабатывается")  # Статус заказа
-    admin_comment = models.TextField(blank=True)                        # Комментарий менеджера (на будущее)
-
-    tracking_number = models.CharField(max_length=100, blank=True)      # Номер отслеживания
-
-    promo_code = models.CharField(max_length=50, blank=True)            # Промокод
-    discount_amount = models.IntegerField(default=0)                    # Размер скидки
-
-    comment = models.TextField(blank=True)                              # Комментарий клиента
-
+    status = models.CharField(max_length=50, default="Обрабатывается")
+    admin_comment = models.TextField(blank=True)
+    tracking_number = models.CharField(max_length=100, blank=True)
+    promo_code = models.CharField(max_length=50, blank=True)
+    discount_amount = models.IntegerField(default=0)
+    comment = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)                    # Дата изменения
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"Заказ #{self.id}"

@@ -15,7 +15,6 @@
 
                 <div class="d-flex justify-content-between align-items-center">
                     
-                    <!-- Левая часть -->
                     <div>
                         <div class="fw-bold">Заказ № {{ order.id }}</div>
                         <div class="text-muted small">
@@ -23,7 +22,6 @@
                         </div>
                     </div>
 
-                    <!-- Статус -->
                     <span class="badge 
                         {% if order.status == 'Обрабатывается' %} bg-warning text-dark
                         {% elif order.status == 'Отменён' %} bg-danger
@@ -34,7 +32,6 @@
                         {{ order.status }}
                     </span>
 
-                    <!-- Итоговая цена -->
                     <div class="fw-bold fs-5">
                         {{ order.total_price }} ₸
                     </div>

@@ -5,25 +5,19 @@ from django.contrib.auth.models import User
 from store.models import Product, Category, Order, OrderItem
 
 
-# --------------------------------------------------
-# BASE SETUP
-# --------------------------------------------------
 class BaseTest(TestCase):
     def setUp(self):
         self.client = Client()
 
-        # user
         self.user = User.objects.create_user(
             username="testuser",
             password="1234"
         )
 
-        # category
         self.category = Category.objects.create(
             name="Смартфоны"
         )
 
-        # products
         self.product1 = Product.objects.create(
             category=self.category,
             name="iPhone 15",
@@ -41,9 +35,6 @@ class BaseTest(TestCase):
         )
 
 
-# --------------------------------------------------
-# HOME PAGE TESTS
-# --------------------------------------------------
 class HomePageTests(BaseTest):
 
     def test_home_page_loads(self):
@@ -65,9 +56,6 @@ class HomePageTests(BaseTest):
         self.assertContains(response, "Samsung S25")
 
 
-# --------------------------------------------------
-# CART TESTS
-# --------------------------------------------------
 class CartTests(BaseTest):
 
     def test_add_to_cart(self):
@@ -92,9 +80,6 @@ class CartTests(BaseTest):
         self.assertNotIn(str(self.product1.id), cart)
 
 
-# --------------------------------------------------
-# CHECKOUT TESTS
-# --------------------------------------------------
 class CheckoutTests(BaseTest):
 
     def test_checkout_requires_login(self):
@@ -121,9 +106,6 @@ class CheckoutTests(BaseTest):
         self.assertEqual(order.status, "Обрабатывается")
 
 
-# --------------------------------------------------
-# ORDER TESTS
-# --------------------------------------------------
 class OrderTests(BaseTest):
 
     def setUp(self):
@@ -171,9 +153,6 @@ class OrderTests(BaseTest):
         self.assertEqual(self.order.status, "Оплачено")
 
 
-# --------------------------------------------------
-# CATEGORY TESTS
-# --------------------------------------------------
 class CategoryTests(BaseTest):
 
     def test_category_detail_page(self):
@@ -185,9 +164,6 @@ class CategoryTests(BaseTest):
         self.assertContains(response, "Samsung S25")
 
 
-# --------------------------------------------------
-# URL SMOKE TESTS (ПРОВЕРКА ВСЕХ ССЫЛОК)
-# --------------------------------------------------
 class UrlSmokeTests(BaseTest):
 
     def test_all_named_urls_exist(self):

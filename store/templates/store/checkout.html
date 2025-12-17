@@ -3,7 +3,6 @@
 
 {% block content %}
 <div class="row">
-  <!-- LEFT FORM -->
   <div class="col-lg-7">
     <div class="card p-4">
       <h4 class="mb-3">Оформление заказа</h4>
@@ -11,27 +10,23 @@
       <form method="post" action="{% url 'checkout' %}">
         {% csrf_token %}
 
-        <!-- USER NAME -->
         <div class="mb-3">
           <label class="form-label">Ваше имя</label>
           <input type="text" name="name" class="form-control" required
                  value="{{ request.POST.name|default:request.user.username }}">
         </div>
 
-        <!-- EMAIL -->
         <div class="mb-3">
           <label class="form-label">Email</label>
           <input type="email" name="email" class="form-control"
                  value="{{ request.POST.email|default:request.user.email }}">
         </div>
 
-        <!-- PHONE -->
         <div class="mb-3">
           <label class="form-label">Телефон</label>
           <input type="text" name="phone" class="form-control" required>
         </div>
 
-        <!-- DELIVERY -->
         <div class="mb-3">
           <label class="form-label">Тип доставки</label>
           <select name="delivery_type" class="form-select">
@@ -40,13 +35,11 @@
           </select>
         </div>
 
-        <!-- ADDRESS -->
         <div class="mb-3">
           <label class="form-label">Адрес доставки (если выбран курьер)</label>
           <input type="text" name="address" class="form-control" placeholder="Алматы, ул. ...">
         </div>
 
-        <!-- PAYMENT -->
         <div class="mb-3">
           <label class="form-label">Способ оплаты</label>
           <select name="payment_type" class="form-select">
@@ -56,21 +49,18 @@
           </select>
         </div>
 
-        <!-- COMMENT -->
         <div class="mb-3">
           <label class="form-label">Комментарий к заказу</label>
           <textarea name="comment" rows="2" class="form-control"
                     placeholder="Например: позвоните за 10 минут"></textarea>
         </div>
 
-        <!-- PROMO -->
         <div class="mb-3">
           <label class="form-label">Промокод</label>
           <input type="text" name="promo_code" class="form-control"
                  placeholder="Если есть промокод — введите его здесь">
         </div>
 
-        <!-- RULES -->
         <div class="form-check mb-3">
           <input class="form-check-input" type="checkbox" id="agree" required>
           <label class="form-check-label small" for="agree">
@@ -85,7 +75,6 @@
     </div>
   </div>
 
-  <!-- RIGHT SUMMARY -->
   <div class="col-lg-5">
     <div class="card p-3">
       <h6>Ваш заказ</h6>

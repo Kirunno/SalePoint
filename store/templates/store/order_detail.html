@@ -7,7 +7,6 @@
 
 <h3 class="mb-3">Заказ № {{ order.id }}</h3>
 
-<!-- STATUS + DATE -->
 <p class="text-muted">
   Создан: {{ order.created_at|date:"d.m.Y H:i" }}
   {% if order.updated_at %}
@@ -28,7 +27,6 @@
 
 <hr>
 
-<!-- ORDER INFO -->
 <div class="card mb-4">
   <div class="card-body">
 
@@ -88,7 +86,6 @@
   </div>
 </div>
 
-<!-- ITEMS LIST -->
 <h5 class="mb-3">Состав заказа</h5>
 
 <ul class="list-group mb-4">
@@ -122,7 +119,6 @@
 
 <h4 class="fw-bold">Итого к оплате: {{ order.total_price }} ₸</h4>
 
-<!-- ACTIONS -->
 <div class="mt-4">
 
   {% if order.status == "Обрабатывается" %}
